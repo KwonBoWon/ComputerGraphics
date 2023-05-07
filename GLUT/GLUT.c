@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 #include <GL/glut.h>
 #include <stdbool.h>
-
+// R G B
 #define BLACK 0.0, 0.0, 0.0
 #define WHITE 1.0, 1.0, 1.0
 #define RED 1.0, 0.0, 0.0
@@ -10,7 +10,7 @@
 #define YELLOW 1.0, 1.0, 0.0
 #define MAGENTA 1.0, 0.0, 1.0
 #define CYAN 0.0, 1.0, 1.0
-
+GLubyte cubeIndices[24] = { 0,3,2,1,2,3,7,6,0,4,7,3,1,2,6,54,5,6,7,0,1,5,4 };
 typedef struct _objColor {
 	GLfloat R;
 	GLfloat G;
@@ -30,7 +30,7 @@ int mouseCurPositionX = 0;
 int mouseCurPositionY = 0;
 int mouseCurButton = 0;
 float scale = 0;
-
+/*
 int main(int argc, char** argv) {
 	// glut init
 	glutInit(&argc, argv);
@@ -52,10 +52,11 @@ int main(int argc, char** argv) {
 	glutMainLoop();
 
 
-}
+}*/
+
 void init() {
 	glClearColor(BLACK, 1.0); // 배경색 
-	//glColor3f(WHITE); //빨 초 파
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(-1.0, 1.0, -1.0, 1.0); //  카메라 크기
@@ -64,17 +65,31 @@ void mydisplay() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_POLYGON);
 	glColor3f(newColor.R, newColor.G, newColor.B);
-	glVertex2f(-0.5, -0.5);
-	glVertex2f(-0.5, 0.5);
-	glVertex2f(0.5, 0.5);
-	glEnd();
+	glVertex2f(-1.0, -1.0);
+	glVertex2f(-1.0, 0.0);
+	glVertex2f(0.0, 0.0);
 
+	
+	glDrawElements(GL_QUADS, 24, GL_UNSIGNED_BYTE, cubeIndices);
+	glEnd();
+	/*
 	glBegin(GL_POLYGON);
 	glColor3f(newColor.R, newColor.G, newColor.B);
 	glVertex2f(0.5, -0.5);
 	glVertex2f(1.0, -1.0);
 	glVertex2f(1.0, 0.5);
+	glVertex2f(0.5, 1.0);
 	glEnd();
+
+	glBegin(GL_POLYGON);
+	glColor3f(newColor.R, newColor.G, newColor.B);
+	glVertex2f(-1.0, 0.7);
+	glVertex2f(-0.8, 1.0);
+	glVertex2f(-0.6, 0.7);
+	glVertex2f(-0.7, 0.3);
+	glVertex2f(-0.9, 0.3);
+	*/
+	//glEnd();
 
 	glFlush();
 }
@@ -83,15 +98,23 @@ void mouseStatus(int button, int state, int x, int y) {
 	// state: GLUT_DOWN, GLUT_UP
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		startMovement = GL_TRUE;
-		printf("LEFT\n");
-		//newColor.R = 0.0, newColor.G = 0.0, newColor.B = 1.0;
-
+		//startMovement = GL_TRUE;
+		printf("LEFTCLICK\n");
+		if (x < 250) {
+			newColor.R = 0.0, newColor.G = 0.0, newColor.B = 1.0;
+		}
+		else {
+			newColor.R = 1.0, newColor.G = 0.0, newColor.B = 0.0;
+		}
 	}
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) { // 왼쪽 마우스를 뗄떼도 적용이 되어버림
-		printf("RIGHT\n");
-		//newColor.R = 1.0, newColor.G = 0.0, newColor.B = 0.0;
-
+		printf("RIGHTCLICK\n");
+		if (y < 250) {
+			newColor.R = 1.0, newColor.G = 1.0, newColor.B = 1.0;
+		}
+		else {
+			newColor.R = 0.0, newColor.G = 0.0, newColor.B = 0.0;
+		}
 	}
 	mouseCurPositionX = x;
 	mouseCurPositionY = y;
@@ -100,7 +123,7 @@ void mouseStatus(int button, int state, int x, int y) {
 
 
 void mouseMotion(int x, int y) {
-	printf("%d, %d\n", x, y);//내가볼때 버퍼에 저장해 놨다가 비교를 해야함(레프트가 아니게 될때)
+	printf("%d, %d\n", x, y); //  현재 좌표
 	if (mouseCurButton != GLUT_LEFT_BUTTON) {//왼쪽 누를때
 		//x_angle += 360.0 * (x-mouseCurPositonX)/width
 		//y_angle += 360.0 * (y-mouseCurPositonY)/width
